@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}">
+</head>
+<!--标签插件-->
+<link rel="stylesheet" href="../../static/css/tagsinput.css" th:href="@{/css/tagsinput.css}">
+<!--下拉框插件-->
+<link rel="stylesheet" href="../../static/css/component-chosen.min.css" th:href="@{/css/component-chosen.min.css}">
+<!--markdown编辑器必需-->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.38.0/lib/codemirror.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlightjs@9.10.0/styles/github.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tui-color-picker@2.2.0/dist/tui-color-picker.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tui-editor@1.0.0/dist/tui-editor.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tui-editor@1.0.0/dist/tui-editor-contents.min.css">
+<!--覆盖[tui-editor-contents.min.css]中字体大小-->
+<style>
+    .tui-editor-contents {
+        font-size: 15px;
+        margin: 0;
+        padding: 0;
+    }
+    .te-md-container .CodeMirror {
+        font-size: 15px;
+        height: inherit;
+    }
+</style>
+<body>
+<!----------------------------------->
+<div class="container-fluid blog-content-container">
+    <div class="row">
+        <div class="col-lg-9 col-sm-12">
+            <!--编辑博客-->
+            <div class="card" th:object="${blog}">
+                <div class="card-header">
+                    <input type="hidden" name="id" id="id" th:value="*{id}">
+                    <div class="input-group input-group ">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">标题</span>
+                        </div>
+                        <input th:value="*{title}" id="title" name="title" type="text" placeholder="请填写博客标题"
+                               class="form-control" maxlength="50">
+                    </div>
+                    <div class="input-group input-group mt-1">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" >摘要</span>
+                        </div>
+                    <textarea th:text="*{summary}" id="summary" name="summary" placeholder="请填写博客摘要"
+                              class="form-control" maxlength="300"></textarea>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="editSection"></div>
+                </div>
+            </div>
+            <!--/编辑博客-->
+        </div>
+
+        <div class="col-lg-3 mt-lg-0 col-sm-12 mt-3">
+
+            <!--博客设置-->
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fa fa-cog"></i>博客设置</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label for="tagsInput">标签：</label>
+                            <input type="text" id="tagsInput" class="form-control" data-role="tagsinput" name="tagsInput" th:value="${blog.tags}">
+                        </div>
+                    </div>
+                    <div class="row mt-2 " id="catalogSelectContainer">
+                        <div class="col-md-12" id="catalogSelectReplace">
+                            <label for="catalogSelect">分类：<a href="javascript:void(0)" class="blog-add-catalog"
+                                       title="新增分类"
+                                       data-toggle="modal"
+                                       data-target="#catalogEdit-modal"><i class="fa fa-plus"></i>
+                            </a></label>
+                            <!--下拉选择框-->
+                            <select id="catalogSelect" class="form-control form-control-chosen"
+                                    data-placeholder="请选择分类"
+                                    data-size="10">
+                                <option></option>
+                                <option th:each="catalog : ${catalogs}" th:object="${catalog}" th:value="*{id}"
+                                        th:text="*{name}" th:selected="${catalog eq blog.catalog}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-12">
+                            <button class="btn btn-primary float-right" id="submitBlog"
+                                    th:attr="username=${#authentication.name}">发布
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="modal fade" id="catalogEdit-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">新增/编辑 分类</h4>
+                <button class="close" type="button" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" id="catalogFormContainer"></div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="submitEditCatalog" data-dismiss="modal" >提交</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!----------------------------------->
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<script src="../../static/js/tagsinput.js" th:src="@{/js/tagsinput.js}"></script>
+<script src="../../static/js/chosen.jquery.min.js" th:src="@{/js/chosen.jquery.min.js}"></script>
+
+<!--tui.editor-->
+<script src="https://cdn.jsdelivr.net/npm/markdown-it@8.4.1/dist/markdown-it.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/to-mark@1.1.0/dist/to-mark.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tui-code-snippet@1.4.0/dist/tui-code-snippet.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.38.0/lib/codemirror.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/highlightjs@9.10.0/highlight.pack.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/squire-rte@1.8.14/build/squire-raw.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tui-color-picker@2.2.0/dist/tui-color-picker.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tui-editor@1.0.0/dist/tui-editor-Editor.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tui-editor@1.0.0/dist/tui-editor-extColorSyntax.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tui-editor@1.0.0/dist/tui-editor-extScrollSync.min.js"></script>
+<!--/tui.editor-->
+
+<script th:inline="javascript">
+    var _content = [[${blog.content}]];
+    var _fileServerUrl = [[${fileServerUrl}]];
+    var _username = [[${#authentication.name}]]
+</script>
+
+<script src="../../static/js/userspace/blogedit.js" th:src="@{/js/userspace/blogedit.js}"></script>
+
+</body>
+</html>

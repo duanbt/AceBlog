@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}">
+</head>
+<body>
+
+<!--page content-->
+<div class="container blog-content-container">
+    <div class="row">
+        <!--博客内容-->
+        <div class="col-md-8 mb-3">
+            <div id="mainContainer">
+                <div id="mainContainerReplace">
+                    <div class="card">
+                        <div class="card-body" th:each="blog : ${blogList}">
+                            <h4 class="card-title ">
+                                <a href="javascript:void(0)" th:href="'/u/' + ${blog.username}"
+                                   th:title="${blog.username}">
+                                    <img src=""
+                                         th:src="${blog.avatar} == null ? '/images/avatar-default.jpg' : ${blog.avatar}"
+                                         class="blog-avatar-40">
+                                </a>
+                                <a href="javascript:void(0)" class="card-link" th:text="${blog.title}"
+                                   th:href="'/u/' + ${blog.username} + '/blogs/' + ${blog.blogId}"></a>
+                            </h4>
+                            <p class="card-text" th:text="${blog.summary}">
+                            </p>
+                            <div class="row">
+                                <div class="ml-3 mr-auto ">
+                                    <a href="javascript:void(0)" class="card-link" th:href="'/u/'+*{blog.username}"
+                                       th:text="*{blog.username}"></a>&nbsp;&nbsp;
+                                    <i class="fa fa-calendar"></i>&nbsp;[[${#dates.format(blog.createTime,
+                                    'yyyy-MM-dd')}]]
+                                </div>
+                                <div class="mr-3 ">
+                                    <i class="fa fa-eye">[[${blog.readSize}]]</i>&nbsp;&nbsp;
+                                    <i class="fa fa-thumbs-o-up">[[${blog.voteSize}]]</i>&nbsp;&nbsp;
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--分页条-->
+                        <div th:if="${#lists.size(blogList)}" class="mt-2" id="pageTool"></div>
+                        <script th:inline="javascript">
+                            var _pageSize = [[${page.size}]];
+                            var _count = [[${page.totalElements}]];
+                            var _pageIndex = [[${page.number+1}]];
+                        </script>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+
+        <!--右侧栏-->
+        <div class="col-md-4">
+            <!--热门标签-->
+            <div class="card">
+                <h5 class="card-header"><i class="fa fa-tags">热门标签</i></h5>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <a href="javascript:void(0)" th:each="tag, tagStat : ${tags}" th:object="${tag}" class="h5 blog-tag"
+                               th:attr="tag=*{name}">
+                                <span class="badge badge-secondary" th:text="*{name}"></span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--热门用户-->
+            <div class="card my-3">
+                <h5 class="card-header"><i class="fa fa-user">热门用户</i></h5>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <span th:each="user : ${users}" th:object="${user}">
+                                <a href="javascript:void(0)" th:href="'/u/' + *{username}"
+                                   th:title="*{username}">
+                                    <img src="" th:src="*{avatar} == null ? '/images/avatar-default.jpg' : *{avatar}"
+                                         class="blog-avatar-50">
+                                </a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--热门文章-->
+            <div class="card my-3">
+                <h5 class="card-header"><i class="fa fa-fire"></i> 热门文章</h5>
+                <ul class="list-group">
+                    <a href="javascript:void (0)"
+                       class="list-group-item d-flex justify-content-between align-items-center"
+                       th:each="esBlog, blogStat : ${hotest}" th:object="${esBlog}"
+                       th:href="'/u/' + *{username} + '/blogs/' + *{blogId}">
+                        [[*{title}]]
+                        <span class="badge badge-pill" th:classappend="${blogStat.index} eq 0
+							? 'badge-danger': (${blogStat.index} eq 1
+							? 'badge-warning':(${blogStat.index} eq 2
+							? 'badge-info':'badge-secondary'))" th:text="*{readSize}"></span>
+                    </a>
+                </ul>
+            </div>
+
+            <!--最新发布-->
+            <div class="card">
+                <h5 class="card-header"><i class="fa  fa-file-text"></i> 最新发布</h5>
+                <ul class="list-group">
+                    <a class="list-group-item" th:each="esBlog : ${newest}" th:object="${esBlog}"
+                       th:href="'/u/' + *{username} + '/blogs/' + *{blogId}" th:text="*{title}"></a>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+<script src="../static/js/paging.js" th:src="@{/js/paging.js}"></script>
+
+</body>
+</html>

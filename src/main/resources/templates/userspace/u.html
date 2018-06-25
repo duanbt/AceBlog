@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}">
+</head>
+<body>
+
+<!--page content-->
+<div class="container blog-content-container">
+    <div class="row">
+        <!--左侧-->
+        <div class="col-md-4 col-xl-3">
+            <div class="d-flex flex-column">
+                <div class="">
+                    <a href="#" th:href="'/u/' + ${user.username}" th:title="${user.username}"
+                       class="d-none d-md-block">
+                        <img class="blog-avatar-230 rounded"
+                             th:src="${user.avatar}==null ? '/images/avatar-default.jpg' : ${user.avatar}"
+                             th:alt="${#authentication.name}">
+                    </a>
+                    <p class="h4" th:text="${user.username}"></p>
+                </div>
+                <div>
+                    <h5>
+                        <i class="fa fa-envelope-o"></i>
+                        <a href="javascript:void(0);" class="text-dark" th:href="'mailto:'+${user.email}"
+                           th:text="${user.email}"></a>
+                    </h5>
+                    <hr>
+                </div>
+                <div class="mt-2" id="catalogMain">
+                    <div class="card" id="catalogReplace">
+                        <h5 class="card-header">
+                            <i class="fa fa-bars">分类</i>
+                            <a href="javascript:void(0)" th:if="${isCatalogOwner}" class="blog-add-catalog float-right"
+                               title="新增分类"
+                               data-toggle="modal"
+                               data-target="#catalogEdit-modal"><i class="fa fa-plus"></i>
+                            </a>
+                        </h5>
+                        <ul class="list-group">
+                            <li class="list-group-item " th:each="catalog : ${catalogs}" th:object="${catalog}">
+                                <a class="blog-query-by-catalog" href="javascript:void(0)"
+                                   th:attr="catalogId=*{id}">[[*{name}]]
+                                </a>
+                                <div class="float-right">
+                                    <a href="javascript:void(0)" class="blog-edit-catalog" data-toggle="modal"
+                                       title="修改分类"
+                                       data-target="#catalogEdit-modal"
+                                       th:if="${isCatalogOwner}" th:attr="catalogId=*{id}"><i
+                                            class="fa fa-edit"></i></a>
+                                    <a href="javascript:void(0)" class="blog-delete-catalog" title="删除分类"
+                                       th:if="${isCatalogOwner}" th:attr="catalogId=*{id}"><i
+                                            class="fa fa-times"></i></a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!--右侧-->
+        <div class="col-md-8 col-xl-9 mt-md-0 mt-3">
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs" id="userspaceNavtab">
+                        <li class="nav-item">
+                            <a class="nav-link blog-u-order" th:classappend="${order} eq 'new'?'active':''"
+                               th:attr="url='/u/'+${user.username}+'/blogs?order=new'" data-order="new"
+                               href="javascript:void(0);">最新</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link blog-u-order" th:classappend="${order} eq 'hot'?'active':''"
+                               th:attr="url='/u/'+${user.username}+'/blogs?order=hot'" data-order="hot"
+                               href="javascript:void(0);">最热</a>
+                        </li>
+                        <form class="form-inline">
+                            <div class="input-group">
+                                <input class="form-control" type="text" placeholder="搜索此用户" id="keyword">
+                                <div class="input-group-append">
+                                    <a href="javascript:void(0);" id="searchBlogs" class="btn btn-secondary"><i
+                                            class="fa fa-search"></i></a>
+                                </div>
+                            </div>
+                        </form>
+                    </ul>
+                </div>
+
+                <div id="mainContainer">
+                    <div id="mainContainerReplace">
+                        <div class="card-body" th:each="blog:${blogList}">
+                            <h4>
+                                <a th:href="'/u/'+${blog.user.username} + '/blogs/'+${blog.id}"
+                                   href="javascript:void(0)" class="card-link"
+                                   th:text="${blog.title}"></a>
+                            </h4>
+                            <p class="card-text" th:text="${blog.summary}">
+                            </p>
+                            <div class="row">
+                                <div class="ml-3 mr-auto ">
+                                    <a href="javascript:void(0)" class="card-link" th:href="'/u/'+${blog.user.username}"
+                                       th:text="${blog.user.username}"></a>&nbsp;&nbsp;
+                                    <i class="fa fa-calendar"></i>&nbsp;[[${#dates.format(blog.createTime, 'yyyy-MM-dd')}]]
+                                </div>
+                                <div class="mr-3 ">
+                                    <i class="fa fa-eye">[[${blog.readSize}]]</i>&nbsp;&nbsp;
+                                    <i class="fa fa-thumbs-o-up">[[${blog.voteSize}]]</i>&nbsp;&nbsp;
+                                </div>
+                            </div>
+                        </div>
+                        <!--分页条-->
+                        <div th:if="${#lists.size(blogList)}" class="mt-2" id="pageTool"></div>
+                        <script th:inline="javascript">
+                            var _pageSize = [[${page.size}]];
+                            var _count = [[${page.totalElements}]];
+                            var _pageIndex = [[${page.number+1}]];
+                        </script>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="catalogEdit-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">新增/编辑 分类</h4>
+                <button class="close" type="button" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" id="catalogFormContainer"></div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="submitEditCatalog" data-dismiss="modal">提交</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<script th:inline="javascript">
+    var _username = [[${user.username}]];
+</script>
+
+<script src="../../static/js/paging.js" th:src="@{/js/paging.js}"></script>
+<script src="../../static/js/userspace/u.js" th:src="@{/js/userspace/u.js}"></script>
+</body>
+</html>

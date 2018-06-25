@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}">
+
+</head>
+<body>
+
+<!--page content-->
+<div class="container blog-content-container">
+    <form id="registerForm">
+        <h3 class="alert alert-light col-md-5">用户注册</h3>
+        <div class="form-group col-md-5">
+            <label for="username">账号</label>
+            <input type="text" class="form-control" id="username" name="username" placeholder="输入账号" required
+                   autofocus maxlength="50">
+            <small id="usernameHelp" class="form-text text-muted">3到20个字符</small>
+        </div>
+        <div class="form-group col-md-5">
+            <label for="email">邮箱</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="输入邮箱" required maxlength="50" autocomplete='email'>
+            <small id="emailHelp" class="form-text text-muted"></small>
+        </div>
+        <div class="form-group col-md-5">
+            <label for="password">密码</label>
+            <input type="password" class="form-control" id="password" name="password" autocomplete='email' placeholder="请输入密码" required maxlength="30">
+            <small id="passwordHelp" class="form-text text-muted">字母或特殊符号和数字结合</small>
+        </div>
+        <div class="form-group col-md-5">
+            <button type="submit" class="btn btn-primary" id="registerBtn">注册</button>
+        </div>
+    </form>
+</div>
+
+
+<div class="modal fade" id="registerResultModel">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">提示</h5>
+                <button type="button" class="close" data-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p id="registerResult"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" data-dismiss="modal" id="loginBtn">立即登录</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<script src="../static/js/jquery.form.min.js" th:src="@{/js/jquery.form.min.js}"></script>
+<script src="../static/js/users/register.js" th:src="@{/js/users/register.js}"></script>
+</body>
+</html>

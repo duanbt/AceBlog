@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+
+
+<div class="container" th:object="${catalog}">
+    <form id="catalogForm">
+        <input type="hidden" name="id" th:value="*{id}" id="catalogId">
+
+        <div class="form-group">
+            <label for="catalogName" class="col-form-label">名称</label>
+            <input type="text" class="form-control" name="name" id="catalogName" th:value="*{name}" maxlength="20" placeholder="请输入分类名称">
+        </div>
+    </form>
+</div>
+</html>

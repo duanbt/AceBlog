@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<div class="card-header text-light">
+    <div class="input-group">
+        <input type="text" id="searchName" class="form-control" placeholder="输入用户名搜索">
+        <input type="text" id="searchTitle" class="form-control" placeholder="输入标题搜索">
+        <button class="btn btn-secondary" type="button" id="searchBtn"><i class="fa fa-search"></i></button>
+    </div>
+</div>
+
+<div id="mainContainer" class="card-body">
+    <div id="mainContainerReplace">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th data-field="id">ID</th>
+                <th data-field="title">标题</th>
+                <th data-field="createTime">发表时间</th>
+                <th data-field="username">用户名</th>
+                <th data-field="role">用户角色</th>
+                <th data-field="operation">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="blog : ${blogList}">
+                <td th:text="${blog.id}"></td>
+                <td th:text="${blog.title}"></td>
+                <td th:text="${#dates.format(blog.createTime, 'yyyy-MM-dd')}"></td>
+                <td th:text="${blog.user.username}"></td>
+                <td th:text="${blog.user.authorities}"></td>
+                <td>
+                    <div>
+                        <a class="blog-view-blog" href="javascript:void(0)" target="_blank"
+                           th:href="'/u/'+${blog.user.username} + '/blogs/'+${blog.id}" title="查看">
+                            <i class="fa fa-eye"></i>
+                        </a>
+                        <a class="blog-delete-blog" href="javascript:void(0)"
+                           th:attr="blogId=${blog.id}" title="删除">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <!--分页条-->
+        <div th:if="${#lists.size(blogList)}" id="pageTool"></div>
+        <script th:inline="javascript">
+            var _pageSize = [[${page.size}]];
+            var _count = [[${page.totalElements}]];
+            var _pageIndex = [[${page.number+1}]];
+        </script>
+    </div>
+
+</div>
+
+
+<script src="../../static/js/paging.js" th:src="@{/js/paging.js}"></script>
+<script src="../../static/js/blogs/main.js" th:src="@{/js/blogs/main.js}"></script>
+
+</html>

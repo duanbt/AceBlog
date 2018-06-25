@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+
+
+<!--页脚-->
+<footer th:fragment="footer" class="footer">
+    <div class="container mb-2 mt-5">
+        <div class="row  text-secondary justify-content-center">
+            Copyright © 2018 AceBlog&nbsp;|&nbsp;Powered by<a class="text-secondary" target="_blank"
+                                                              href="https://github.com/waylau/new-star-blog">&nbsp;new-star-blog</a>&nbsp;|&nbsp;<a
+                    class="text-secondary" target="_blank" href="http://www.miitbeian.gov.cn">陕ICP备18009486号-1</a>
+            &nbsp;|&nbsp;<a href="mailto:duanbaitao@foxmail.com" class="text-secondary"><i class="fa fa-envelope-o">&nbsp;duanbt@foxmail.com</i></a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
+    <script src="../../static/js/jquery.scrollUp.min.js" th:src="@{/js/jquery.scrollUp.min.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.js"></script>
+    <script src="../../static/js/main.js" th:src="@{/js/main.js}"></script>
+
+
+</footer>

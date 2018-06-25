@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        .imageBox {
+            position: relative;
+            height: 400px;
+            width: 400px;
+            border: 1px solid #aaa;
+            background: #fff;
+            overflow: hidden;
+            background-repeat: no-repeat;
+            cursor: move;
+        }
+
+        .imageBox .thumbBox {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 200px;
+            height: 200px;
+            margin-top: -100px;
+            margin-left: -100px;
+            border: 1px solid rgb(102, 102, 102);
+            box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.5);
+            background: none repeat scroll 0% 0% transparent;
+        }
+
+        .imageBox .spinner {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            text-align: center;
+            line-height: 400px;
+            background: rgba(0, 0, 0, 0.7);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="form-group">
+            <label for="file">上传图片</label>
+            <input type="file" accept="image/*" class="form-control-file" id="file">
+        </div>
+    </div>
+    <div class="row mt-1">
+        <div class="imageBox col-md-9">
+            <div class="thumbBox"></div>
+            <div class="spinner" style="display: none">Loading...</div>
+        </div>
+        <div class="cropped col-md-3"></div>
+    </div>
+    <div class="row mt-1">
+        <div class="btn-group mr-auto">
+            <button class="btn btn-info" type="button" id="btnZoomIn"><i class="fa fa-plus"></i></button>
+            <button class="btn btn-info" type="button" id="btnZoomOut"><i class="fa fa-minus"></i></button>
+        </div>
+        <button type="button" class="btn btn-info" id="btnCrop"><i class="fa fa-crop">裁剪</i></button>
+    </div>
+    <form enctype="multipart/form-data" id="avatarForm"></form>
+</div>
+
+<script src="../../static/js/cropbox.js" th:src="@{/js/cropbox.js}"></script>
+<script>
+    $(function () {
+        var options =
+            {
+                thumbBox: '.thumbBox',
+                spinner: '.spinner',
+                imgSrc: '/images/avatar-default.jpg'
+            };
+        var cropper;
+        $('#file').on('change', function () {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                options.imgSrc = e.target.result;
+                cropper = $('.imageBox').cropbox(options);
+            };
+            reader.readAsDataURL(this.files[0]);
+            this.files = null;
+        });
+        $('#btnCrop').on('click', function () {
+            var img = cropper.getDataURL();
+            $('.cropped').html('');
+            $('.cropped').append('<img src="' + img + '" class="blog-avatar-150 rounded">');
+            $('.cropped').append('<img src="' + img + '" class="blog-avatar-150 rounded-circle mt-3">');
+        });
+        $('#btnZoomIn').on('click', function () {
+            cropper.zoomIn();
+        });
+        $('#btnZoomOut').on('click', function () {
+            cropper.zoomOut();
+        })
+    })
+</script>
+</body>
+</html>

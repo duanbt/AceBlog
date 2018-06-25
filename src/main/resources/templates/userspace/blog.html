@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}">
+</head>
+<link rel="stylesheet" href="../../static/css/autoc.min.css" th:href="@{/css/autoc.min.css}">
+
+<!--tui.editor展示必需-->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlightjs@9.10.0/styles/github.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tui-editor@1.0.0/dist/tui-editor-contents.min.css">
+<!--覆盖[tui-editor-contents.min.css]中字体大小-->
+<style>
+    .tui-editor-contents {
+        font-size: 16px;
+        margin: 0;
+        padding: 0;
+    }
+</style>
+<body>
+
+<div class="container blog-content-container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <!--标题部分-->
+                <div class="card-body">
+                    <h4 class="card-title">
+                        <a href="javascript:void(0)" th:href="'/u/' + ${blog.user.username}"
+                           th:title="${blog.user.username}">
+                            <img src=""
+                                 th:src="${blog.user.avatar} == null ? '/images/avatar-default.jpg' : ${blog.user.avatar}"
+                                 class="blog-avatar-40">
+                        </a>
+                        <a href="javascript:void(0)" class="card-link" th:text="${blog.title}"></a>
+                    </h4>
+                    <div class="row">
+                        <div class="ml-3 mr-auto ">
+                            <a href="javascript:void(0)" class="card-link" th:href="'/u/'+${blog.user.username}"
+                               th:text="${blog.user.username}"></a>&nbsp;&nbsp;
+                            <i class="fa fa-calendar"></i>&nbsp;[[${#dates.format(blog.createTime, 'yyyy-MM-dd')}]]
+                        </div>
+                        <div class=" mr-3 blog-status-display">
+                            <i class="fa fa-eye">[[${blog.readSize}]]</i>&nbsp;&nbsp;
+                            <i class="fa fa-thumbs-o-up">[[${blog.voteSize}]]</i>&nbsp;&nbsp;
+                        </div>
+                    </div>
+                    <div class="float-right btn-group ">
+                        <a th:if="${isBlogOwner}" th:href="'/u/'+${blog.user.username}+'/blogs/edit/'+${blog.id}"
+                           class="btn btn-secondary ">编辑</a>
+                        <a th:if="${isBlogOwner}"
+                           class="btn btn-secondary blog-delete-blog" href="javascript:void(0)">删除</a>
+                    </div>
+                </div>
+                <!--/标题部分-->
+                <hr>
+                <!--正文-->
+                <div class="card-body">
+                    <div id="editSection"></div>
+                </div>
+                <!--/正文-->
+
+                <hr>
+
+                <!--分类&标签&点赞-->
+                <div class="card-body d-flex">
+                    <div class="mr-auto">
+                        <h5>分类：<a th:href="'/u/' + ${blog.user.username} + '/blogs?catalog='+${blog.catalog.id} "
+                                  href="javascript:void(0)" th:text="${blog.catalog.name}"></a></h5>
+                        <h5 class="mr-auto">标签：
+                            <a href="javascript:void (0)" class="badge badge-secondary mr-1 h5 blog-tag"
+                               th:each="tag : ${#strings.arraySplit(blog.tags,',')}"
+                               th:attr="tag = ${tag}" th:text="${tag}"></a>
+                        </h5>
+                    </div>
+                    <div>
+                        <button th:hidden="${currentVote}" class="btn btn-lg btn-outline-secondary"
+                                id="submitVote">
+                            <i class="fa fa-thumbs-o-up">赞</i>
+                        </button>
+                        <button th:attr="voteId=(${currentVote}?${currentVote.id}:'')"
+                                th:hidden="${currentVote}==null" class="btn btn-secondary btn-lg" id="cancelVote">
+                            <i class="fa fa-thumbs-o-up">取消</i>
+                        </button>
+                    </div>
+
+                </div><!--/分类&标签-->
+
+                <!--留言区-->
+                <div class="card-body">
+                    <div class="row justify-content-center">
+                        <div class="col-md-12">
+                            <!-- 来必力City版安装代码 -->
+                             <div id="lv-container" data-id="city" data-uid="MTAyMC8zNzM2NS8xMzg5OQ==">
+                                 <script type="text/javascript">
+                                     (function (d, s) {
+                                         var j, e = d.getElementsByTagName(s)[0];
+
+                                         if (typeof LivereTower === 'function') {
+                                             return;
+                                         }
+
+                                         j = d.createElement(s);
+                                         j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+                                         j.async = true;
+
+                                         e.parentNode.insertBefore(j, e);
+                                     })(document, 'script');
+                                 </script>
+                                 <noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+                             </div>
+                            <!-- City版安装代码已完成 -->
+                        </div>
+                    </div>
+                </div>
+                <!--/留言区-->
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+<script src="../../static/js/autoc.min.js" th:src="@{/js/autoc.min.js}"></script>
+<script th:inline="javascript">
+    var _blogId = [[${blog.id}]];
+    var _blogUrl = '/u/' + [[${blog.user.username}]] + '/blogs/' + [[${blog.id}]];
+    var _content = [[${blog.content}]]
+</script>
+
+<!--tui.editor-->
+<script src="https://cdn.jsdelivr.net/npm/markdown-it@8.4.1/dist/markdown-it.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tui-code-snippet@1.4.0/dist/tui-code-snippet.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/highlightjs@9.10.0/highlight.pack.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tui-editor@1.0.0/dist/tui-editor-Viewer.min.js"></script>
+<!--/tui.editor-->
+
+
+<script src="../../static/js/userspace/blog.js" th:src="@{/js/userspace/blog.js}"></script>
+</body>
+</html>

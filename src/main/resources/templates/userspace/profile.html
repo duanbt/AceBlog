@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}">
+</head>
+<body>
+
+<!--page content-->
+<div class="container blog-content-container">
+
+    <div class="row">
+        <!-- 左侧栏目 -->
+        <div class="col-md-4">
+                <figure class="figure">
+                    <a class="blog-edit-avatar" data-toggle="modal" data-target="#avatar-modal"
+                       data-th-attr="username=${userModel.user.username}">
+                        <img th:src="${userModel.user.avatar} == null ? '/images/avatar-default.jpg' : ${userModel.user.avatar}"
+                             class="figure-img blog-avatar blog-avatar-230 rounded"
+                             src="../../static/images/avatar-default.jpg">
+                    </a>
+                    <figcaption class="figure-caption text-center">点击头像可更换</figcaption>
+                </figure>
+        </div>
+
+        <!--右侧-->
+        <div class="col-md-8">
+            <!--个人设置-->
+            <div class="card">
+                <h5 class="card-header"><i class="fa fa-cog"></i>个人设置</h5>
+                <div class="card-body" th:object="${user}">
+                    <form id="userForm">
+                        <input type="hidden" name="id" id="userId" th:value="*{id}">
+                        <div class="form-group">
+                            <label for="username" class="col-form-label">账号</label>
+                            <input autocomplete='on' type="text" class="form-control" id="username" name="username" th:value="*{username}"
+                                   readonly="readonly">
+                        </div>
+                        <div class="form-group">
+                            <label for="email" class="col-form-label">邮箱</label>
+                            <input type="email" class="form-control" autocomplete='email' id="email" name="email" th:value="*{email}"
+                                   maxlength="50" placeholder="请输入邮箱">
+                        </div>
+                        <div class="form-group">
+                            <label for="password" class="col-form-label" >密码</label>
+                            <input type="password" class="form-control" id="password" name="password" autocomplete='off'
+                                   th:value="*{password}" maxlength="30" placeholder="请输入密码">
+                        </div>
+                    </form>
+                    <button id="submitBtn" th:attr="url='/u/'+*{username}+'/profile'"
+                            class="btn btn-primary">保存
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="avatar-modal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">编辑头像</h4>
+                <button class="close" type="button" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" id="avatarFormContainer"></div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="submitEditAvatar">提交</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<script th:inline="javascript">
+    var _fileServerUrl = [[${userModel.fileServerUrl}]]
+</script>
+<script src="../../static/js/userspace/profile.js" th:src="@{/js/userspace/profile.js}"></script>
+</body>
+</html>
