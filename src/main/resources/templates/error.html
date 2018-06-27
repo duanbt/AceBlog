@@ -8,8 +8,12 @@
         <h1 class="display-1">404</h1>
         <h1 class="display-4">page not found</h1>
     </div>
-</div>
+    <div th:if="${errorMsg}">
+        异常信息：
+        <span th:text="${errorMsg}" class="text-danger text-center"></span>
+    </div>
 
+</div>
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 </body>
 </html>
