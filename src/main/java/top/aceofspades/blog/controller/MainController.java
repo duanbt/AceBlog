@@ -2,23 +2,16 @@ package top.aceofspades.blog.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.TransactionSystemException;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import top.aceofspades.blog.domain.Authority;
 import top.aceofspades.blog.domain.User;
-import top.aceofspades.blog.service.AuthorityService;
 import top.aceofspades.blog.service.UserService;
-import top.aceofspades.blog.util.ConstraintViolationExceptionHandler;
 import top.aceofspades.blog.vo.Response;
 
-import javax.validation.ConstraintViolationException;
-import java.util.ArrayList;
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 主页控制器.
@@ -63,28 +56,14 @@ public class MainController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Response> registerUser(User user) {
+    public ResponseEntity<Response> registerUser(User user) throws Exception {
 
         //限制最多用户数
-        if(userService.countUser() >= maxUser){
+        if (userService.countUser() >= maxUser) {
             return ResponseEntity.ok().body(new Response(false, "用户注册数已达上限，请邮件联系管理员，邮箱可在页面底部找到~"));
         }
 
-        try {
-            user = userService.registerUser(user);
-        } catch (TransactionSystemException e) {
-            Throwable t = e.getCause();
-            while ((t != null) && !(t instanceof ConstraintViolationException)) {
-                t = t.getCause();
-            }
-            return ResponseEntity.ok().body(
-                    new Response(false, ConstraintViolationExceptionHandler.getMessage((ConstraintViolationException) t)));
-        } catch (DataIntegrityViolationException e){
-            return ResponseEntity.ok().body(
-                    new Response(false, "账号或邮箱重复"));
-        }catch (Exception e) {
-            return ResponseEntity.ok().body(new Response(false, e.getMessage()));
-        }
+        user = userService.registerUser(user);
         return ResponseEntity.ok().body(new Response(true, "注册成功", user));
     }
 
@@ -92,5 +71,16 @@ public class MainController {
     @GetMapping("/error")
     public String error() {
         return "error";
+    }
+
+    @GetMapping("/timeout")
+    public Object timeout(HttpServletRequest request) {
+        String requestType = request.getHeader("X-Requested-With");
+        if ("XMLHttpRequest".equals(requestType)) {//Ajax请求
+            return ResponseEntity.ok().body(new Response(false, "会话超时,请刷新页面重新登录"));
+        } else {//非Ajax请求
+            //此时requestType为null
+            return "login";
+        }
     }
 }

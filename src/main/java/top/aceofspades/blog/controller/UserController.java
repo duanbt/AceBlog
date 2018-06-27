@@ -58,7 +58,7 @@ public class UserController {
             @RequestParam(required = false, defaultValue = "") String username,
             Model model) {
 
-        Page<User> page = userService.listUsersByUsernameLike(username, PageRequest.of(pageIndex-1, pageSize));
+        Page<User> page = userService.listUsersByUsernameLike(username, PageRequest.of(pageIndex - 1, pageSize));
         List<User> list = page.getContent();
         model.addAttribute("page", page);
         model.addAttribute("userList", list);
@@ -100,26 +100,12 @@ public class UserController {
      * @return
      */
     @PostMapping
-    public ResponseEntity<Response> saveOrUpdateUser(User user, Long authorityId) {
+    public ResponseEntity<Response> saveOrUpdateUser(User user, Long authorityId) throws Exception {
         List<Authority> authorities = new ArrayList<>();
         authorities.add(authorityService.getAuthorityById(authorityId).get());
         user.setAuthorities(authorities);
 
-        try {
-            userService.saveOrUpdateUser(user);
-        } catch (TransactionSystemException e) {
-            Throwable t = e.getCause();
-            while ((t != null) && !(t instanceof ConstraintViolationException)) {
-                t = t.getCause();
-            }
-            return ResponseEntity.ok().body(
-                    new Response(false, ConstraintViolationExceptionHandler.getMessage((ConstraintViolationException) t)));
-        } catch (DataIntegrityViolationException e){
-            return ResponseEntity.ok().body(
-                    new Response(false, "账号或邮箱重复"));
-        }catch (Exception e) {
-            return ResponseEntity.ok().body(new Response(false, e.getMessage()));
-        }
+        userService.saveOrUpdateUser(user);
         return ResponseEntity.ok().body(new Response(true, "处理成功", user));
     }
 
@@ -132,11 +118,7 @@ public class UserController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Response> delete(@PathVariable Long id, Model model) {
-        try {
-            userService.removeUser(id);
-        } catch (Exception e) {
-            return ResponseEntity.ok().body(new Response(false, e.getMessage()));
-        }
+        userService.removeUser(id);
         return ResponseEntity.ok().body(new Response(true, "处理成功"));
     }
 

@@ -47,44 +47,35 @@ public class AdminController {
 
     /**
      * 导入ES索引库
+     *
      * @return
      */
     @GetMapping("/importAll")
-    public ResponseEntity<Response> importAllEsBlog() {
-        try {
-            esBlogService.importAllEsBlog();
-        } catch (Exception e) {
-            return ResponseEntity.ok().body(new Response(false, e.getMessage()));
-        }
+    public ResponseEntity<Response> importAllEsBlog() throws Exception {
+        esBlogService.importAllEsBlog();
         return ResponseEntity.ok().body(new Response(true, "导入成功"));
     }
 
     /**
      * 清空ES索引库
+     *
      * @return
      */
     @GetMapping("/removeAll")
-    public ResponseEntity<Response> removeAll(){
-        try {
-            esBlogService.removeAllEsBlog();
-        }catch (Exception e){
-            return ResponseEntity.ok().body(new Response(false, e.getMessage()));
-        }
+    public ResponseEntity<Response> removeAll() {
+        esBlogService.removeAllEsBlog();
         return ResponseEntity.ok().body(new Response(true, "清空索引库成功"));
     }
 
     /**
      * 获得索引库数量
+     *
      * @return
      */
     @GetMapping("/countEs")
-    public ResponseEntity<Response> countEsBlog(){
+    public ResponseEntity<Response> countEsBlog() {
         Long count = null;
-        try {
-            count = esBlogService.countAllEsBlog();
-        }catch (Exception e){
-            return ResponseEntity.ok().body(new Response(false, e.getMessage()));
-        }
+        count = esBlogService.countAllEsBlog();
         return ResponseEntity.ok().body(new Response(true, "索引库数量为" + count));
     }
 

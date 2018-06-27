@@ -68,11 +68,7 @@ public class BlogController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Response> deleteBlog(@PathVariable("id") Long id) {
-        try {
-            blogService.removeBlog(id);
-        } catch (Exception e) {
-            return ResponseEntity.ok().body(new Response(false, e.getMessage()));
-        }
+        blogService.removeBlog(id);
         return ResponseEntity.ok().body(new Response(true, "处理成功"));
     }
 }

@@ -219,11 +219,7 @@ public class UserSpaceController {
         if (blog.getCatalog().getId() == null) {
             return ResponseEntity.ok().body(new Response(false, "请选择分类"));
         }
-        try {
-            blogService.saveBlog(blog);
-        } catch (Exception e) {
-            return ResponseEntity.ok().body(new Response(false, e.getMessage()));
-        }
+        blogService.saveBlog(blog);
         String redirectUrl = "/u/" + username + "/blogs/" + blog.getId();
         return ResponseEntity.ok().body(new Response(true, "处理成功", redirectUrl));
     }
@@ -238,11 +234,7 @@ public class UserSpaceController {
     @DeleteMapping("/{username}/blogs/{id}")
     @PreAuthorize("authentication.name.equals(#username)")
     public ResponseEntity<Response> deleteBlog(@PathVariable("username") String username, @PathVariable("id") Long id) {
-        try {
-            blogService.removeBlog(id);
-        } catch (Exception e) {
-            return ResponseEntity.ok().body(new Response(false, e.getMessage()));
-        }
+        blogService.removeBlog(id);
 
         String redirectUrl = "/u/" + username + "/blogs";
         return ResponseEntity.ok().body(new Response(true, "处理成功", redirectUrl));
@@ -274,21 +266,7 @@ public class UserSpaceController {
     @PostMapping("/{username}/profile")
     @PreAuthorize("authentication.name.equals(#username)")
     public ResponseEntity<Response> saveProfile(@PathVariable("username") String username, User user) {
-        try {
-            userService.saveOrUpdateUser(user);
-        } catch (TransactionSystemException e) {
-            Throwable t = e.getCause();
-            while ((t != null) && !(t instanceof ConstraintViolationException)) {
-                t = t.getCause();
-            }
-            return ResponseEntity.ok().body(
-                    new Response(false, ConstraintViolationExceptionHandler.getMessage((ConstraintViolationException) t)));
-        } catch (DataIntegrityViolationException e) {
-            return ResponseEntity.ok().body(
-                    new Response(false, "账号或邮箱重复"));
-        } catch (Exception e) {
-            return ResponseEntity.ok().body(new Response(false, e.getMessage()));
-        }
+        userService.saveOrUpdateUser(user);
         return ResponseEntity.ok().body(new Response(true, "处理成功", user));
     }
 
@@ -316,19 +294,16 @@ public class UserSpaceController {
      */
     @PostMapping("/{username}/avatar")
     @PreAuthorize("authentication.name.equals(#username)")
-    public ResponseEntity<Response> saveAvatar(@PathVariable("username") String username, @RequestBody User user) {
-        try {
-            User oldUser = (User) userDetailsService.loadUserByUsername(username);
-            String avatarUrl = oldUser.getAvatar();
-            if (avatarUrl != null) {
-                //发送http请求 删除原头像
-                String fileId = avatarUrl.substring(avatarUrl.lastIndexOf("/"));
-                httpAPIService.doDelete(fileServerNativeUrl + fileId);
-            }
-            userService.saveOrUpdateUser(user);
-        } catch (Exception e) {
-            return ResponseEntity.ok().body(new Response(false, e.getMessage()));
+    public ResponseEntity<Response> saveAvatar(@PathVariable("username") String username, @RequestBody User user) throws Exception {
+        User oldUser = (User) userDetailsService.loadUserByUsername(username);
+        String avatarUrl = oldUser.getAvatar();
+        if (avatarUrl != null) {
+            //发送http请求 删除原头像
+            String fileId = avatarUrl.substring(avatarUrl.lastIndexOf("/"));
+            httpAPIService.doDelete(fileServerNativeUrl + fileId);
         }
+        userService.saveOrUpdateUser(user);
+
         return ResponseEntity.ok().body(new Response(true, "处理成功", user.getAvatar()));
     }
 

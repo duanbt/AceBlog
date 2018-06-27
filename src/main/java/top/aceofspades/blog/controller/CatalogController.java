@@ -75,7 +75,7 @@ public class CatalogController {
     @PreAuthorize("authentication.name.equals(#username)")
     public String listCatalogsSelect(@RequestParam("username") String username, Model model) {
 
-        User user = (User)userDetailsService.loadUserByUsername(username);
+        User user = (User) userDetailsService.loadUserByUsername(username);
         List<Catalog> catalogs = catalogService.listCatalogs(user);
         model.addAttribute("blog", new Blog(null, null, null));
         model.addAttribute("catalogs", catalogs);
@@ -97,41 +97,35 @@ public class CatalogController {
         String username = catalogVO.getUsername();
         Catalog catalog = catalogVO.getCatalog();
 
-        User user = (User)userDetailsService.loadUserByUsername(username);
+        User user = (User) userDetailsService.loadUserByUsername(username);
         catalog.setUser(user);
 
-        try {
-            catalogService.saveCatalog(catalog);
-        }catch (Exception e){
-            return ResponseEntity.ok().body(new Response(false, e.getMessage()));
-        }
+        catalogService.saveCatalog(catalog);
         return ResponseEntity.ok().body(new Response(true, "处理成功"));
     }
 
     /**
      * 删除分类
+     *
      * @param username
      * @param id
      * @return
      */
     @DeleteMapping("/{id}")
     @PreAuthorize("authentication.name.equals(#username)") //验证本人操作
-    public ResponseEntity<Response> delete(@RequestParam("username") String username, @PathVariable("id") Long id){
-        try {
-            catalogService.removeCatalog(id);
-        }catch (Exception e){
-            return ResponseEntity.ok().body(new Response(false, e.getMessage()));
-        }
+    public ResponseEntity<Response> delete(@RequestParam("username") String username, @PathVariable("id") Long id) {
+        catalogService.removeCatalog(id);
         return ResponseEntity.ok().body(new Response(true, "处理成功"));
     }
 
     /**
      * 获取分类新增页面
+     *
      * @param model
      * @return
      */
     @GetMapping("/edit")
-    public String getCatalogEdit(Model model){
+    public String getCatalogEdit(Model model) {
         Catalog catalog = new Catalog(null, null);
         model.addAttribute("catalog", catalog);
         return "userspace/catalogedit";
@@ -139,15 +133,16 @@ public class CatalogController {
 
     /**
      * 获取分类编辑页面
+     *
      * @param id
      * @param model
      * @return
      */
     @GetMapping("/edit/{id}")
-    public String getCatalogById(@PathVariable("id") Long id, Model model){
+    public String getCatalogById(@PathVariable("id") Long id, Model model) {
         Optional<Catalog> optionalCatalog = catalogService.getCatalogById(id);
         Catalog catalog = null;
-        if(optionalCatalog.isPresent()){
+        if (optionalCatalog.isPresent()) {
             catalog = optionalCatalog.get();
         }
 

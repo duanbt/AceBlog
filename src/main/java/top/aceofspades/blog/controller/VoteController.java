@@ -19,6 +19,7 @@ import java.util.Optional;
 
 /**
  * 点赞 控制器.
+ *
  * @author ace
  * @version 1.0
  * @since 2018/6/13 11:57
@@ -35,46 +36,40 @@ public class VoteController {
 
     /**
      * 点赞
+     *
      * @param blogId
      * @return
      */
     @PostMapping
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
-    public ResponseEntity<Response> createVote(Long blogId){
-        try {
-            Vote vote = blogService.createVote(blogId);
-            return ResponseEntity.ok().body(new Response(true, "点赞成功", vote));
-        }catch (Exception e){
-            return ResponseEntity.ok().body(new Response(false, e.getMessage()));
-        }
+    public ResponseEntity<Response> createVote(Long blogId) {
+        Vote vote = blogService.createVote(blogId);
+        return ResponseEntity.ok().body(new Response(true, "点赞成功", vote));
     }
 
     /**
      * 删除点赞
-     * @param id vote 对象 id
+     *
+     * @param id     vote 对象 id
      * @param blogId
      * @return
      */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
-    public ResponseEntity<Response> delete(@PathVariable("id") Long id, Long blogId){
+    public ResponseEntity<Response> delete(@PathVariable("id") Long id, Long blogId) {
         Optional<Vote> optionalVote = voteService.getVoteById(id);
         User voteUser = null;
-        if(optionalVote.isPresent()){
+        if (optionalVote.isPresent()) {
             voteUser = optionalVote.get().getUser();
-        }else {
+        } else {
             return ResponseEntity.ok().body(new Response(false, "不存在该点赞"));
         }
 
         //判断操作用户必须是点赞的所有者，才能删除
-        User principal = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(principal != null && principal.getUsername().equals(voteUser.getUsername())){//操作者是点赞人
-            try {
-                blogService.removeVote(blogId, id);
-            }catch (Exception e){
-                return ResponseEntity.ok().body(new Response(false, e.getMessage()));
-            }
-        }else {//操作者不是点赞人
+        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal != null && principal.getUsername().equals(voteUser.getUsername())) {//操作者是点赞人
+            blogService.removeVote(blogId, id);
+        } else {//操作者不是点赞人
             return ResponseEntity.ok().body(new Response(false, "没有权限"));
         }
         return ResponseEntity.ok().body(new Response(true, "取消点赞成功"));
