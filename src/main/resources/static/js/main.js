@@ -82,7 +82,11 @@ $(function () {
                 "tag": tag
             },
             success: function (data) {
-                $("#mainContainer").html(data);
+                if (data.success != null) {
+                    $("#mainContainer").html(data.message);
+                } else {
+                    $("#mainContainer").html(data);
+                }
                 initPageTool();
 
             },

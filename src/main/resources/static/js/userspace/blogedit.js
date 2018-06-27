@@ -5,7 +5,7 @@
 $("#tagsInput").tagsinput({
     tagClass: 'badge-secondary mb-2',
     maxTags: 5,
-    maxChars: 10,
+    maxChars: 20,
     trimValue: true,
     confirmKeys: [13, 44, 188]
 });
@@ -69,13 +69,17 @@ $(function () {
         })
     });
 
-    // 获取新增分类的页面
+    //获取新增分类的页面
     $(".blog-content-container").on("click", ".blog-add-catalog", function () {
         $.ajax({
             url: '/catalogs/edit',
             type: 'GET',
             success: function (data) {
-                $("#catalogFormContainer").html(data);
+                if (data.success != null) {
+                    $("#catalogFormContainer").html(data.message);
+                } else {
+                    $("#catalogFormContainer").html(data);
+                }
             },
             error: function () {
                 toastr.error("error!");

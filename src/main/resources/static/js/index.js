@@ -36,7 +36,11 @@ $(function () {
                 "keyword": $("#indexKeyword").val()
             },
             success: function (data) {
-                $("#mainContainer").html(data);
+                if (data.success != null) {
+                    $("#mainContainer").html(data.message);
+                } else {
+                    $("#mainContainer").html(data);
+                }
                 initPageTool();
 
             },
@@ -64,8 +68,11 @@ $(function () {
         $.ajax({
             url: url + '&async=true',
             success: function (data) {
-                $("#mainContainer").html(data);
-                initPageTool();
+                if (data.success != null) {
+                    $("#mainContainer").html(data.message);
+                } else {
+                    $("#mainContainer").html(data);
+                }
             },
             error: function () {
                 toastr.error("error!");

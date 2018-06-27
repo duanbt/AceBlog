@@ -40,7 +40,11 @@ $(function () {
                 "title": $("#searchTitle").val()
             },
             success: function (data) {
-                $("#mainContainer").html(data);
+                if (data.success != null) {
+                    $("#mainContainer").html(data.message);
+                } else {
+                    $("#mainContainer").html(data);
+                }
                 initPageTool();
             },
             error: function () {

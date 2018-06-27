@@ -41,7 +41,11 @@ $(function () {
                 "name": $("#searchName").val()
             },
             success: function (data) {
-                $("#mainContainer").html(data);
+                if (data.success != null) {
+                    $("#mainContainer").html(data.message);
+                } else {
+                    $("#mainContainer").html(data);
+                }
                 initPageTool();
             },
             error: function () {
@@ -61,7 +65,11 @@ $(function () {
         $.ajax({
             url: "/users/add",
             success: function (data) {
-                $("#userFormContainer").html(data);
+                if (data.success != null) {
+                    $("#userFormContainer").html(data.message);
+                } else {
+                    $("#userFormContainer").html(data);
+                }
             },
             error: function (data) {
                 toastr.error("error!")
@@ -96,7 +104,11 @@ $(function () {
         $.ajax({
             url: "users/edit/" + $(this).attr("userId"),
             success: function (data) {
-                $("#userFormContainer").html(data);
+                if (data.success != null) {
+                    $("#userFormContainer").html(data.message);
+                } else {
+                    $("#userFormContainer").html(data);
+                }
             },
             error: function () {
                 toastr.error("error!");

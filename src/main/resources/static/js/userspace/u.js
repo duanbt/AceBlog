@@ -40,7 +40,11 @@ $(function () {
                 "keyword": $("#keyword").val()
             },
             success: function (data) {
-                $("#mainContainer").html(data);
+                if (data.success != null) {
+                    $("#mainContainer").html(data.message);
+                } else {
+                    $("#mainContainer").html(data);
+                }
                 initPageTool();
             },
             error: function () {
@@ -68,7 +72,11 @@ $(function () {
         $.ajax({
             url: url + '&async=true',
             success: function (data) {
-                $("#mainContainer").html(data);
+                if (data.success != null) {
+                    $("#mainContainer").html(data.message);
+                } else {
+                    $("#mainContainer").html(data);
+                }
                 initPageTool();
             },
             error: function () {
@@ -98,7 +106,11 @@ $(function () {
             type: 'GET',
             data: {"username": username},
             success: function (data) {
-                $("#catalogMain").html(data);
+                if (data.success != null) {
+                    $("#catalogMain").html(data.message);
+                } else {
+                    $("#catalogMain").html(data);
+                }
             },
             error: function () {
                 toastr.error("error!");
@@ -116,7 +128,11 @@ $(function () {
             url: '/catalogs/edit',
             type: 'GET',
             success: function (data) {
-                $("#catalogFormContainer").html(data);
+                if (data.success != null) {
+                    $("#catalogFormContainer").html(data.message);
+                } else {
+                    $("#catalogFormContainer").html(data);
+                }
             },
             error: function () {
                 toastr.error("error!");
@@ -131,7 +147,11 @@ $(function () {
             url: '/catalogs/edit/' + $(this).attr('catalogId'),
             type: 'GET',
             success: function (data) {
-                $("#catalogFormContainer").html(data);
+                if(data.success != null){
+                    $("#catalogFormContainer").html(data.message);
+                }else {
+                    $("#catalogFormContainer").html(data);
+                }
             },
             error: function () {
                 toastr.error("error!");

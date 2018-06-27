@@ -36,7 +36,11 @@ $(function () {
         $.ajax({
             url: avatarApi,
             success: function (data) {
-                $("#avatarFormContainer").html(data);
+                if(data.success != null){
+                    $("#avatarFormContainer").html(data.message);
+                }else {
+                    $("#avatarFormContainer").html(data);
+                }
             },
             error: function () {
                 toastr.error("error!");

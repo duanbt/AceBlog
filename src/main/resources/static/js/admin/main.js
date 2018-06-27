@@ -12,7 +12,11 @@ $(function () {
         $.ajax({
             url: url,
             success: function (data) {
-                $("#rightContainer").html(data);
+                if (data.success != null) {
+                    $("#rightContainer").html(data.message);
+                } else {
+                    $("#rightContainer").html(data);
+                }
             },
             error: function () {
                 toastr.error("error");
