@@ -64,6 +64,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().exceptionHandling().accessDeniedPage("/error");//处理异常，拒绝访问就重定向到/error
         http.csrf().ignoringAntMatchers(("/h2-console/**"));//禁用 H2 控制台 CSRF防护
         http.headers().frameOptions().sameOrigin(); //允许:  网站页面在同源页面的 frame 中展示 (点击劫持相关)
+        http.sessionManagement().maximumSessions(1).expiredUrl("/timeout");//设置同时在线人数，必须重写User的equal方法和hashCode方法才能起作用
     }
 
     /**
