@@ -10,6 +10,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * User 实体.
@@ -72,9 +73,13 @@ public class User implements UserDetails {
         this.username = username;
     }
 
-    public void setPassword(String password){this.password = password;}
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     /**
      * 加密密码
+     *
      * @param password
      */
     public void encodePassword(String password) {
@@ -117,6 +122,19 @@ public class User implements UserDetails {
         this.authorities = authorities;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(username, user.username);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username);
+    }
+
     /*---分割线，以下方法为 UserDetails 的---*/
     public String getUsername() {
         return username;
@@ -134,7 +152,7 @@ public class User implements UserDetails {
             simpleAuthorities.add(new SimpleGrantedAuthority(authority.getAuthority()));
         }
         return simpleAuthorities;*/
-      return this.authorities;
+        return this.authorities;
     }
 
     @Override
