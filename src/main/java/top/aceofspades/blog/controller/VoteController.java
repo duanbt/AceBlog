@@ -41,7 +41,7 @@ public class VoteController {
      * @return
      */
     @PostMapping
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
+    @PreAuthorize("isAuthenticated()")//验证已登录
     public ResponseEntity<Response> createVote(Long blogId) {
         Vote vote = blogService.createVote(blogId);
         return ResponseEntity.ok().body(new Response(true, "点赞成功", vote));
