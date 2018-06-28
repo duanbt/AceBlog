@@ -16,17 +16,6 @@ import java.util.List;
  */
 public interface EsBlogRepository extends ElasticsearchRepository<EsBlog, String> {
 
-    /**
-     * 模糊查询
-     * @param title
-     * @param summary
-     * @param content
-     * @param tag
-     * @param pageable
-     * @return
-     */
-    Page<EsBlog> findByTitleContainingOrSummaryContainingOrContentContainingOrTagsContaining(String title, String summary, String content, String tag, Pageable pageable);
-
 
     /**
      * 根据 Blog 的 id 查询 EsBlog
@@ -36,12 +25,5 @@ public interface EsBlogRepository extends ElasticsearchRepository<EsBlog, String
     EsBlog findByBlogId(Long blogId);
 
 
-    /**
-     * 根据标签模糊查询
-     * @param tag
-     * @param pageable
-     * @return
-     */
-    Page<EsBlog> findByTagsContaining(String tag, Pageable pageable);
 
 }
