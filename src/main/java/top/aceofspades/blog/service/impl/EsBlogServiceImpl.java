@@ -1,7 +1,9 @@
 package top.aceofspades.blog.service.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
@@ -92,29 +94,45 @@ public class EsBlogServiceImpl implements EsBlogService {
 
     @Override
     public Page<EsBlog> listNewestEsBlogs(String keyword, Pageable pageable) {
+        Page<EsBlog> page;
+
+        /*加入排序条件*/
         Sort sort = new Sort(Sort.Direction.DESC, "createTime");
         if (pageable.getSort().isUnsorted()) {
             pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
         }
-        keyword = keyword.replaceAll("\\s*", "");//替换掉字符串中的空格、制表符、换页符等空白字符
-        Page<EsBlog> page = esBlogRepository.findByTitleContainingOrSummaryContainingOrContentContainingOrTagsContaining(keyword, keyword, keyword, keyword, pageable);
+
+        if (StringUtils.isNotEmpty(keyword)) {
+            page = esBlogRepository.search(QueryBuilders.multiMatchQuery(keyword, "title", "tags", "content", "summary"), pageable);
+        }else {
+            page = esBlogRepository.findAll(pageable);
+        }
+
         return page;
     }
 
     @Override
     public Page<EsBlog> listHotestEsBlogs(String keyword, Pageable pageable) {
+        Page<EsBlog> page;
+
+        /*加入排序条件*/
         Sort sort = new Sort(Sort.Direction.DESC, "readSize", "voteSize", "createTime");
         if (pageable.getSort().isUnsorted()) {
             pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
         }
-        keyword = keyword.replaceAll("\\s*", "");//替换掉字符串中的空格、制表符、换页符等空白字符
-        Page<EsBlog> page = esBlogRepository.findByTitleContainingOrSummaryContainingOrContentContainingOrTagsContaining(keyword, keyword, keyword, keyword, pageable);
+
+        if (StringUtils.isNotEmpty(keyword)) {
+            page = esBlogRepository.search(QueryBuilders.multiMatchQuery(keyword, "title", "tags", "content", "summary"), pageable);
+        }else {
+            page = esBlogRepository.findAll(pageable);
+        }
+
         return page;
     }
 
     @Override
     public Page<EsBlog> listEsBlogsByTag(String tag, Pageable pageable) {
-        Page<EsBlog> page = esBlogRepository.findByTagsContaining(tag, pageable);
+        Page<EsBlog> page = esBlogRepository.search(QueryBuilders.matchQuery("tags", tag), pageable);
         return page;
     }
 
