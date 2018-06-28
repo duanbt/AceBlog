@@ -61,9 +61,7 @@ $(function () {
                     var $voteSize = $(".blog-status-display .fa-thumbs-o-up");
                     $voteSize.text(Number($voteSize.text()) + 1);
                     toastr.success("已赞!")
-                }else if (data.message) {
-                    toastr.warning(data.message);
-                } else {
+                }else {
                     toastr.info("登录后才能点赞哦~");
                 }
             },
