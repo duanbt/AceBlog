@@ -92,7 +92,7 @@ public class BlogServiceImpl implements BlogService {
     public Page<Blog> listBlogsByUserAndKeywordByHot(User user, String keyword, Pageable pageable) {
         String title = "%" + keyword + "%";
         String tag = title;
-        Sort sort = new Sort(Sort.Direction.DESC, "voteSize", "readSize");
+        Sort sort = new Sort(Sort.Direction.DESC, "readSize", "voteSize", "createTime");
         pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
         Page<Blog> blogs = blogRepository.findByUserAndTitleLikeOrUserAndTagsLike(user, title, user, tag, pageable);
         return blogs;
